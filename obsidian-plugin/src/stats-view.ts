@@ -64,7 +64,7 @@ export class StatsView extends ItemView {
 
     for (const day of days) {
       const words = stats.heatmap[day];
-      const intensity = Math.ceil((words / maxWords) * 4) as 1 | 2 | 3 | 4;
+      const intensity = Math.max(1, Math.ceil((words / maxWords) * 4)) as 1 | 2 | 3 | 4;
       const cell = heatmapEl.createDiv({ cls: "dz-heatmap-cell" });
       cell.setAttribute("data-level", String(intensity));
       cell.setAttribute("title", `${day}: ${words} words`);
