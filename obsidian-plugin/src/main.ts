@@ -131,6 +131,9 @@ export default class DraftZeroPlugin extends Plugin {
     };
 
     await this.storage.addSession(session);
+    this.storage.settings.lastUsedGoalType = goal.type;
+    this.storage.settings.lastUsedGoalValue = goal.value;
+    this.storage.settings.lastUsedChallengeConfig = { ...challengeConfig };
     await this.storage.clearInProgress();
 
     if (vaultPath) {

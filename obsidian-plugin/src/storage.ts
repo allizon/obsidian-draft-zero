@@ -13,6 +13,9 @@ export interface PluginSettings {
   sessions: SprintSession[];
   inProgressText: string | null;
   inProgressGoal: Goal | null;
+  lastUsedGoalType: "time" | "words" | null;
+  lastUsedGoalValue: number | null;
+  lastUsedChallengeConfig: ChallengeConfig | null;
 }
 
 export const DEFAULT_SETTINGS: PluginSettings = {
@@ -25,6 +28,9 @@ export const DEFAULT_SETTINGS: PluginSettings = {
   sessions: [],
   inProgressText: null,
   inProgressGoal: null,
+  lastUsedGoalType: null,
+  lastUsedGoalValue: null,
+  lastUsedChallengeConfig: null,
 };
 
 export class PluginStorage {

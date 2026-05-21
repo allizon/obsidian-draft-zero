@@ -26,9 +26,9 @@ export class SetupModal extends Modal {
     super(app);
     this.settings = settings;
     this.onSubmit = onSubmit;
-    this.goalType = settings.defaultGoalType;
-    this.goalValue = settings.defaultGoalValue;
-    this.challengeConfig = { ...settings.defaultChallengeConfig };
+    this.goalType = settings.lastUsedGoalType ?? settings.defaultGoalType;
+    this.goalValue = settings.lastUsedGoalValue ?? settings.defaultGoalValue;
+    this.challengeConfig = { ...(settings.lastUsedChallengeConfig ?? settings.defaultChallengeConfig) };
     this.saveDestination =
       settings.saveDestination === "ask" ? "new-file" : settings.saveDestination;
   }
