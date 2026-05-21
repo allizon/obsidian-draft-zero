@@ -37,6 +37,9 @@ export class SprintModal extends Modal {
     modalEl.addClass("dz-sprint-modal");
     contentEl.addClass("dz-sprint-content");
     contentEl.empty();
+    this.textarea = null;
+    this.statusEl = null;
+    this.annoyanceEl = null;
 
     this.render();
     this.machine.startTimer();
