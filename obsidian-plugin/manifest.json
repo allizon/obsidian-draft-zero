@@ -1,0 +1,10 @@
+{
+  "id": "draft-zero",
+  "name": "Draft Zero",
+  "version": "0.1.0",
+  "minAppVersion": "1.4.0",
+  "description": "Distraction-free sprint writing with challenge modes and streak tracking.",
+  "author": "Draft Zero",
+  "authorUrl": "",
+  "isDesktopOnly": false
+}

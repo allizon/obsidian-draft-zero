@@ -1,0 +1,127 @@
+/* Sprint modal: full-screen layout */
+.dz-sprint-modal .modal-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 1rem;
+  --dz-tint: transparent;
+  background: color-mix(in srgb, var(--background-primary) 100%, var(--dz-tint));
+  transition: background 2s;
+}
+
+/* Annoyance levels */
+.dz-sprint-modal.dz-annoyance-1 {
+  --dz-tint: rgba(255, 220, 0, 0.12);
+}
+.dz-sprint-modal.dz-annoyance-2 {
+  --dz-tint: rgba(255, 140, 0, 0.22);
+}
+.dz-sprint-modal.dz-annoyance-3 {
+  --dz-tint: rgba(200, 40, 40, 0.28);
+}
+
+/* Status bar */
+.dz-status {
+  font-size: 0.85em;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+  user-select: none;
+}
+
+/* Sprint textarea */
+.dz-textarea {
+  flex: 1;
+  width: 100%;
+  resize: none;
+  border: none;
+  background: transparent;
+  color: var(--text-normal);
+  font-size: 1rem;
+  font-family: var(--font-text);
+  line-height: 1.6;
+  outline: none;
+  padding: 0;
+}
+
+/* Invisible ink */
+.dz-textarea.dz-invisible-ink {
+  color: transparent !important;
+  caret-color: var(--text-normal);
+  text-shadow: none !important;
+}
+
+/* Annoyance badge */
+.dz-annoyance-badge {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  font-size: 0.85em;
+  font-weight: 600;
+  color: var(--text-warning);
+  pointer-events: none;
+  user-select: none;
+}
+.dz-sprint-modal.dz-annoyance-3 .dz-annoyance-badge {
+  color: var(--text-error);
+}
+
+/* Completion overlay */
+.dz-completion {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--background-secondary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-m);
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  box-shadow: var(--shadow-l);
+}
+.dz-completion p {
+  margin: 0;
+  color: var(--text-normal);
+  font-weight: 500;
+}
+
+/* Heatmap view */
+.dz-stats-view {
+  padding: 1.5rem;
+}
+.dz-stats-summary {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+.dz-stat-block {
+  text-align: center;
+}
+.dz-stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-accent);
+}
+.dz-stat-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.dz-heatmap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+}
+.dz-heatmap-cell {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  background: var(--background-modifier-border);
+  cursor: default;
+}
+.dz-heatmap-cell[data-level="1"] { background: var(--color-green); opacity: 0.35; }
+.dz-heatmap-cell[data-level="2"] { background: var(--color-green); opacity: 0.60; }
+.dz-heatmap-cell[data-level="3"] { background: var(--color-green); opacity: 0.80; }
+.dz-heatmap-cell[data-level="4"] { background: var(--color-green); opacity: 1.0; }
