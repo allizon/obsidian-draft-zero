@@ -50,7 +50,7 @@
   background: transparent;
   color: var(--text-normal);
   font-size: var(--font-text-size);
-  font-family: var(--font-editor) !important;
+  font-family: var(--font-editor-override, var(--font-editor)) !important;
   line-height: var(--line-height-normal);
   outline: none !important;
   padding: 0;
