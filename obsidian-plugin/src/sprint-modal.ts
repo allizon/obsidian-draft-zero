@@ -161,7 +161,17 @@ export class SprintModal extends Modal {
     const div = contentEl.createDiv({ cls: "dz-completion" });
     div.createEl("p", { text: "Goal reached! Keep going?" });
 
-    const extendBtn = div.createEl("button", { text: "Extend (+5 min / +100 words)" });
+    const { originalGoal } = this.machine.state;
+    let extendLabel = "Extend";
+    if (originalGoal) {
+      if (originalGoal.type === "time") {
+        const mins = Math.round(originalGoal.value / 60);
+        extendLabel = `Extend (+${mins} min)`;
+      } else {
+        extendLabel = `Extend (+${originalGoal.value} words)`;
+      }
+    }
+    const extendBtn = div.createEl("button", { text: extendLabel });
     extendBtn.addEventListener("click", () => {
       this.machine.dispatch({ type: "EXTEND" });
       div.remove();
