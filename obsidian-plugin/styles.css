@@ -94,12 +94,7 @@ body .dz-sprint-modal textarea.dz-textarea:focus-visible {
 }
 
 .dz-status-detail {
-  opacity: 0;
-  transition: opacity 0.2s;
-}
-
-.dz-bottom-row:hover .dz-status-detail {
-  opacity: 1;
+  opacity: 0.7;
 }
 
 .dz-bottom-actions {

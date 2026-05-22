@@ -181,8 +181,8 @@ export class SprintModal extends Modal {
       key = "Paused";
       detail = ` · ${timeStr} · ${wordCount} words`;
     } else if (status === "freewriting") {
-      key = "Freewriting";
-      detail = ` · ${timeStr} · ${wordCount} words`;
+      key = timeStr;
+      detail = ` · Freewriting · ${wordCount} words`;
     } else if (status === "completed") {
       detail = ` · ${timeStr} · ${wordCount} words`;
     }
