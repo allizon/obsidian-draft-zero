@@ -95,6 +95,39 @@ body .dz-sprint-modal textarea.dz-textarea:focus-visible {
   opacity: 1;
 }
 
+/* Sprint controls — subtle pause/exit row */
+.dz-controls {
+  display: flex;
+  gap: 1.25rem;
+  justify-content: center;
+  margin-top: 0.25rem;
+  opacity: 0.2;
+  transition: opacity 0.2s;
+}
+
+.dz-controls:hover {
+  opacity: 1;
+}
+
+.dz-controls-btn {
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: var(--text-faint);
+  font-size: 0.75em;
+  cursor: pointer;
+  padding: 0.1rem 0.25rem;
+  transition: color 0.15s;
+}
+
+.dz-controls-btn:hover {
+  color: var(--text-normal);
+}
+
+.dz-controls-exit:hover {
+  color: var(--text-error);
+}
+
 /* Annoyance badge — centered overlay */
 .dz-annoyance-badge {
   position: fixed;

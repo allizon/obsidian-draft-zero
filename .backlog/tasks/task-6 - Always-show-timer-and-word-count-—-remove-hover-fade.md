@@ -4,11 +4,12 @@ title: Always show timer and word count — remove hover fade
 status: To Do
 assignee: []
 created_date: '2026-05-21'
-updated_date: '2026-05-21'
+updated_date: '2026-05-22 16:08'
 labels:
   - enhancement
-dependencies: []
-ordinal: 12000
+dependencies:
+  - TASK-22
+ordinal: 4500
 ---
 
 ## Description

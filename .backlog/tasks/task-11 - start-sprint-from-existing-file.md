@@ -4,11 +4,11 @@ title: Ability to start a sprint from an existing file
 status: To Do
 assignee: []
 created_date: '2026-05-21'
-updated_date: '2026-05-21'
+updated_date: '2026-05-22 16:08'
 labels:
   - enhancement
 dependencies: []
-ordinal: 22000
+ordinal: 5437.5
 ---
 
 ## Description

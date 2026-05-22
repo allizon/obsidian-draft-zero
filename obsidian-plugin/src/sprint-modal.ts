@@ -12,6 +12,8 @@ export class SprintModal extends Modal {
   private statusEl: HTMLElement | null = null;
   private statusKeyEl: HTMLElement | null = null;
   private statusDetailEl: HTMLElement | null = null;
+  private controlsEl: HTMLElement | null = null;
+  private pauseBtn: HTMLButtonElement | null = null;
   private autoSaveInterval: ReturnType<typeof setInterval> | null = null;
   private annoyanceInterval: ReturnType<typeof setInterval> | null = null;
   onFinish: (text: string, goal: Goal, durationSeconds: number, completed: boolean) => void;
@@ -44,6 +46,14 @@ export class SprintModal extends Modal {
     this.statusKeyEl = null;
     this.statusDetailEl = null;
     this.annoyanceEl = null;
+
+    // Obsidian processes scope handlers LIFO, so this fires before the
+    // Modal default Escape→close handler registered in the constructor.
+    this.scope.register([], "Escape", () => {
+      if (this.machine.state.status !== "idle") return false;
+      this.close();
+      return false;
+    });
 
     this.render();
     this.machine.startTimer();
@@ -93,6 +103,26 @@ export class SprintModal extends Modal {
       this.statusKeyEl = this.statusEl.createSpan({ cls: "dz-status-key" });
       this.statusDetailEl = this.statusEl.createSpan({ cls: "dz-status-detail" });
 
+      this.controlsEl = contentEl.createDiv({ cls: "dz-controls" });
+
+      this.pauseBtn = this.controlsEl.createEl("button", { text: "Pause", cls: "dz-controls-btn" });
+      this.pauseBtn.addEventListener("click", () => {
+        const { status } = this.machine.state;
+        if (status === "running") {
+          this.machine.dispatch({ type: "PAUSE" });
+        } else if (status === "paused") {
+          this.machine.dispatch({ type: "RESUME" });
+          this.textarea?.focus();
+        }
+      });
+
+      const exitBtn = this.controlsEl.createEl("button", { text: "Exit", cls: "dz-controls-btn dz-controls-exit" });
+      exitBtn.addEventListener("click", () => {
+        if (window.confirm("End your sprint early? Your progress will be saved.")) {
+          this.finish();
+        }
+      });
+
       this.annoyanceEl = contentEl.createDiv({ cls: "dz-annoyance-badge" });
 
       // Invisible ink: toggle class based on status
@@ -117,6 +147,9 @@ export class SprintModal extends Modal {
 
     // Update annoyance level CSS class
     this.updateAnnoyance();
+
+    // Update controls visibility
+    this.updateControls();
   }
 
   private updateStatusBar(
@@ -191,6 +224,22 @@ export class SprintModal extends Modal {
     });
   }
 
+  private updateControls(): void {
+    const { status } = this.machine.state;
+    if (!this.controlsEl || !this.pauseBtn) return;
+    const active = status === "running" || status === "paused" || status === "freewriting";
+    this.controlsEl.style.display = active ? "" : "none";
+    if (status === "paused") {
+      this.pauseBtn.setText("Resume");
+      this.pauseBtn.style.display = "";
+    } else if (status === "running") {
+      this.pauseBtn.setText("Pause");
+      this.pauseBtn.style.display = "";
+    } else {
+      this.pauseBtn.style.display = "none";
+    }
+  }
+
   private updateInvisibleInk(): void {
     if (!this.textarea) return;
     const { status, challengeConfig } = this.machine.state;
@@ -230,6 +279,13 @@ export class SprintModal extends Modal {
     this.machine.dispatch({ type: "END" });
     this.close();
     this.onFinish(text, goal!, elapsedSeconds, completed);
+  }
+
+  close(): void {
+    // Block Escape (and any other close trigger) while a session is active.
+    // finish() dispatches END first, setting status to idle, so it always gets through.
+    if (this.machine.state.status !== "idle") return;
+    super.close();
   }
 
   onClose(): void {
