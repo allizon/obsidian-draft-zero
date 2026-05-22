@@ -4,12 +4,13 @@ title: Show elapsed time and word count on the completion modal
 status: To Do
 assignee: []
 created_date: '2026-05-22 19:20'
+updated_date: '2026-05-22 20:09'
 labels:
   - feature
   - ux
 dependencies: []
 priority: low
-ordinal: 40000
+ordinal: 26750
 ---
 
 ## Description
