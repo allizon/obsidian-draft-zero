@@ -1,4 +1,5 @@
 import { App, Modal } from "obsidian";
+import { ExitConfirmModal } from "./exit-modal";
 import { SessionStateMachine, getAnnoyanceLevel } from "./state";
 import type { Goal } from "./state";
 import type { ChallengeConfig } from "./challenges";
@@ -128,9 +129,18 @@ export class SprintModal extends Modal {
 
       this.exitBtn = actionsSpan.createEl("button", { text: "Exit", cls: "dz-controls-btn dz-controls-exit" });
       this.exitBtn.addEventListener("click", () => {
-        if (window.confirm("End your sprint early? Your progress will be saved.")) {
-          this.finish();
-        }
+        const { status, elapsedSeconds, wordCount } = this.machine.state;
+        const wasPaused = status === "paused";
+        if (!wasPaused) this.machine.dispatch({ type: "PAUSE" });
+
+        new ExitConfirmModal(
+          this.app,
+          elapsedSeconds,
+          wordCount,
+          () => { this.finish(); },
+          () => { this.machine.dispatch({ type: "END" }); super.close(); },
+          () => { if (!wasPaused) this.machine.dispatch({ type: "RESUME" }); }
+        ).open();
       });
 
       this.annoyanceEl = contentEl.createDiv({ cls: "dz-annoyance-badge" });

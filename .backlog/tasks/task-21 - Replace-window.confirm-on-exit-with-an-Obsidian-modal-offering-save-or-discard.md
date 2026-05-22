@@ -1,14 +1,14 @@
 ---
 id: TASK-21
 title: Replace window.confirm on exit with an Obsidian modal offering save or discard
-status: To Do
+status: Done
 assignee: []
 created_date: '2026-05-22 16:05'
-updated_date: '2026-05-22 20:18'
+updated_date: '2026-05-22 20:26'
 labels: []
 dependencies: []
 priority: medium
-ordinal: 4359.375
+ordinal: 1453.125
 ---
 
 ## Description
@@ -23,15 +23,15 @@ This modal may need a grill-me session to work out the right UX — what stats t
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 Clicking Exit opens an Obsidian modal instead of a browser confirm dialog
-- [ ] #2 Modal shows elapsed time and word count (no goal progress)
-- [ ] #3 If word count > 0: modal offers Save (mod-cta) and Discard buttons; if word count is 0: only Discard is shown
-- [ ] #4 Save calls finish() — modal has no knowledge of save destination
-- [ ] #5 Discard closes without saving, no nested confirmation
-- [ ] #6 Discard is a plain secondary button (no red/warning styling)
-- [ ] #7 Modal has no heading — stats lead, then buttons
-- [ ] #8 Sprint timer auto-pauses when exit modal opens; resumes if modal is cancelled
-- [ ] #9 Escape or clicking outside the exit modal cancels and returns to the sprint
+- [x] #1 Clicking Exit opens an Obsidian modal instead of a browser confirm dialog
+- [x] #2 Modal shows elapsed time and word count (no goal progress)
+- [x] #3 If word count > 0: modal offers Save (mod-cta) and Discard buttons; if word count is 0: only Discard is shown
+- [x] #4 Save calls finish() — modal has no knowledge of save destination
+- [x] #5 Discard closes without saving, no nested confirmation
+- [x] #6 Discard is a plain secondary button (no red/warning styling)
+- [x] #7 Modal has no heading — stats lead, then buttons
+- [x] #8 Sprint timer auto-pauses when exit modal opens; resumes if modal is cancelled
+- [x] #9 Escape or clicking outside the exit modal cancels and returns to the sprint
 <!-- AC:END -->
 
 ## Implementation Notes
@@ -48,3 +48,9 @@ Grill-me decisions (2026-05-22):
 - Zero words: show Discard only
 - Buttons: Save (mod-cta) and Discard
 <!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Added ExitConfirmModal (src/exit-modal.ts) — shows elapsed time + word count, Save (mod-cta, hidden if 0 words) and Discard buttons. buttonClicked flag distinguishes button-driven close from Escape/outside-click, which calls onCancel. Sprint-modal dispatches PAUSE before opening the modal and RESUME on cancel (only if it was the one that paused). Discard path dispatches END then calls super.close() to bypass the close() guard. Finish path unchanged — modal has no save destination knowledge.
+<!-- SECTION:FINAL_SUMMARY:END -->
