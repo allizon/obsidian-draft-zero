@@ -1,4 +1,4 @@
-import { Notice, Plugin, WorkspaceLeaf } from "obsidian";
+import { Editor, Notice, Plugin, WorkspaceLeaf } from "obsidian";
 import { PluginStorage } from "./storage";
 import { DraftZeroSettingsTab } from "./settings";
 import { SetupModal } from "./setup-modal";
@@ -33,6 +33,12 @@ export default class DraftZeroPlugin extends Plugin {
       id: "start-sprint",
       name: "Start Sprint",
       callback: () => this.startSprint(),
+    });
+
+    this.addCommand({
+      id: "sprint-at-cursor",
+      name: "Sprint at cursor",
+      editorCallback: (editor: Editor) => this.startSprintAtCursor(editor),
     });
 
     this.addCommand({
@@ -118,6 +124,25 @@ export default class DraftZeroPlugin extends Plugin {
       }
     }
 
+    await this.recordSession(text, goal, durationSeconds, completed, challengeConfig, vaultPath);
+
+    if (vaultPath) {
+      new Notice(`Sprint saved to ${vaultPath} (${wordCount} words)`);
+    } else if (wordCount === 0) {
+      new Notice("Sprint ended with no text — nothing saved.");
+    }
+  }
+
+  private async recordSession(
+    text: string,
+    goal: Goal,
+    durationSeconds: number,
+    completed: boolean,
+    challengeConfig: ChallengeConfig,
+    vaultPath: string | null
+  ): Promise<void> {
+    const wordCount = text.trim() === "" ? 0 : text.trim().split(/\s+/).length;
+
     const session: SprintSession = {
       id: Date.now().toString(36) + Math.random().toString(36).slice(2),
       savedAt: Date.now(),
@@ -136,16 +161,36 @@ export default class DraftZeroPlugin extends Plugin {
     this.storage.settings.lastUsedChallengeConfig = { ...challengeConfig };
     await this.storage.clearInProgress();
 
-    if (vaultPath) {
-      new Notice(`Sprint saved to ${vaultPath} (${wordCount} words)`);
-    } else if (wordCount === 0) {
-      new Notice("Sprint ended with no text — nothing saved.");
-    }
-
-    // Refresh stats view if open
     this.app.workspace.getLeavesOfType(STATS_VIEW_TYPE).forEach((leaf) => {
       (leaf.view as StatsView).render();
     });
+  }
+
+  private startSprintAtCursor(editor: Editor): void {
+    const cursor = editor.getCursor();
+    const beforeCursor = editor.getValue().slice(0, editor.posToOffset(cursor));
+    const seedText = beforeCursor.split("\n").slice(-10).join("\n");
+    const activeFile = this.app.workspace.getActiveFile();
+    const vaultPath = activeFile?.path ?? null;
+
+    new SetupModal(this.app, this.storage.settings, (result) => {
+      new SprintModal(
+        this.app,
+        result,
+        "",
+        async (text, goal, durationSeconds, completed) => {
+          editor.replaceRange(text, cursor);
+          await this.recordSession(text, goal, durationSeconds, completed, result.challengeConfig, vaultPath);
+          const wordCount = text.trim() === "" ? 0 : text.trim().split(/\s+/).length;
+          if (wordCount === 0) {
+            new Notice("Sprint ended with no text — nothing inserted.");
+          } else {
+            new Notice(`Sprint inserted at cursor (${wordCount} words)`);
+          }
+        },
+        seedText
+      ).open();
+    }).open();
   }
 
   private async openStatsView(): Promise<void> {

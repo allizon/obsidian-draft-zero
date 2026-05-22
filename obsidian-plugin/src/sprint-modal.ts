@@ -7,6 +7,7 @@ import type { SetupResult } from "./setup-modal";
 export class SprintModal extends Modal {
   private machine: SessionStateMachine;
   private setupResult: SetupResult;
+  private seedText: string;
   private textarea: HTMLTextAreaElement | null = null;
   private annoyanceEl: HTMLElement | null = null;
   private bottomRowEl: HTMLElement | null = null;
@@ -22,10 +23,12 @@ export class SprintModal extends Modal {
     app: App,
     setupResult: SetupResult,
     initialText: string,
-    onFinish: (text: string, goal: Goal, durationSeconds: number, completed: boolean) => void
+    onFinish: (text: string, goal: Goal, durationSeconds: number, completed: boolean) => void,
+    seedText = ""
   ) {
     super(app);
     this.setupResult = setupResult;
+    this.seedText = seedText;
     this.onFinish = onFinish;
     this.machine = new SessionStateMachine(() => this.render());
     this.machine.dispatch({
@@ -81,6 +84,11 @@ export class SprintModal extends Modal {
     // On first render, build the skeleton
     if (!this.textarea) {
       contentEl.empty();
+
+      if (this.seedText) {
+        const seedEl = contentEl.createDiv({ cls: "dz-seed-text" });
+        seedEl.setText(this.seedText);
+      }
 
       this.textarea = contentEl.createEl("textarea", { cls: "dz-textarea" });
       this.textarea.value = text;

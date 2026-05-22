@@ -40,6 +40,23 @@
   --dz-tint: rgba(200, 40, 40, 0.28);
 }
 
+/* Seed text (read-only context shown above textarea when sprinting at cursor) */
+.dz-sprint-modal .dz-seed-text {
+  width: 100%;
+  overflow: hidden;
+  color: var(--text-muted);
+  font-size: var(--font-text-size);
+  font-family: var(--font-editor-override, var(--font-editor)) !important;
+  line-height: var(--line-height-normal);
+  white-space: pre-wrap;
+  word-break: break-word;
+  user-select: none;
+  padding-bottom: 0.75rem;
+  margin-bottom: 0.75rem;
+  border-bottom: 1px solid var(--background-modifier-border);
+  flex-shrink: 0;
+}
+
 /* Sprint textarea */
 .dz-sprint-modal textarea.dz-textarea {
   flex: 1;
