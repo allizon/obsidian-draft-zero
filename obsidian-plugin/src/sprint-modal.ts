@@ -294,9 +294,10 @@ export class SprintModal extends Modal {
   private finish(): void {
     const { text, goal, elapsedSeconds } = this.machine.state;
     const completed = this.machine.state.status === "completed" || this.machine.state.status === "freewriting";
+    const finalText = this.textarea?.value ?? text;
     this.machine.dispatch({ type: "END" });
     this.close();
-    this.onFinish(text, goal!, elapsedSeconds, completed);
+    this.onFinish(finalText, goal!, elapsedSeconds, completed);
   }
 
   close(): void {
