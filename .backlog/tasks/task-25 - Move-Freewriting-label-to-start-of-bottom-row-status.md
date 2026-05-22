@@ -1,9 +1,10 @@
 ---
 id: TASK-25
 title: Move "Freewriting" label to start of bottom row status
-status: To Do
+status: Done
 assignee: []
 created_date: '2026-05-22 16:42'
+updated_date: '2026-05-22 19:14'
 labels: []
 dependencies: []
 priority: low
@@ -18,5 +19,11 @@ In freewriting mode, the "Freewriting" label currently appears after the elapsed
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 In freewriting mode, the status reads "Freewriting" first, followed by elapsed time and word count
+- [x] #1 In freewriting mode, the status reads "Freewriting" first, followed by elapsed time and word count
 <!-- AC:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Changed freewriting branch in updateBottomRow: key is now "Freewriting" (was the elapsed time string).
+<!-- SECTION:FINAL_SUMMARY:END -->

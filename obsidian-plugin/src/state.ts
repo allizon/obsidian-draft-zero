@@ -88,9 +88,9 @@ export class SessionStateMachine {
         break;
 
       case "TICK":
-        if (prev.status !== "running") break;
+        if (prev.status !== "running" && prev.status !== "freewriting") break;
         next.elapsedSeconds = prev.elapsedSeconds + 1;
-        if (isGoalMet(next)) next.status = "completed";
+        if (prev.status === "running" && isGoalMet(next)) next.status = "completed";
         break;
 
       case "TYPE":

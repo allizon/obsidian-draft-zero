@@ -189,8 +189,19 @@ export class SprintModal extends Modal {
       key = "Paused";
       detail = ` · ${timeStr} · ${wordCount} words`;
     } else if (status === "freewriting") {
-      key = timeStr;
-      detail = ` · Freewriting · ${wordCount} words`;
+      key = "Freewriting";
+      const og = this.machine.state.originalGoal;
+      let goalIndicator = "";
+      if (og) {
+        if (og.type === "time") {
+          const gm = Math.floor(og.value / 60);
+          const gs = og.value % 60;
+          goalIndicator = ` · ✓ ${gm}:${String(gs).padStart(2, "0")}`;
+        } else {
+          goalIndicator = ` · ✓ ${og.value} words`;
+        }
+      }
+      detail = `${goalIndicator} · ${timeStr} elapsed / ${wordCount} words`;
     } else if (status === "completed") {
       detail = ` · ${timeStr} · ${wordCount} words`;
     }
