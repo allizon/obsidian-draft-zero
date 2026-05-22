@@ -4,11 +4,11 @@ title: Document CSS specificity patterns for Obsidian plugin styles
 status: To Do
 assignee: []
 created_date: '2026-05-21'
-updated_date: '2026-05-21'
+updated_date: '2026-05-22 18:18'
 labels:
   - docs
 dependencies: []
-ordinal: 30000
+ordinal: 5906.25
 ---
 
 ## Description

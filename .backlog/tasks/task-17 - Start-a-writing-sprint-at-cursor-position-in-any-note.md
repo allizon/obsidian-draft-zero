@@ -4,11 +4,11 @@ title: Start a writing sprint at cursor position in any note
 status: To Do
 assignee: []
 created_date: '2026-05-22 15:37'
-updated_date: '2026-05-22 16:08'
+updated_date: '2026-05-22 18:25'
 labels:
   - feature
 dependencies: []
-ordinal: 5531.25
+ordinal: 5414.0625
 ---
 
 ## Description

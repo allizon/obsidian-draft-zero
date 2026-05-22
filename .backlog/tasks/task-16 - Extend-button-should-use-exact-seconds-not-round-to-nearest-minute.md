@@ -4,10 +4,11 @@ title: 'Extend button should use exact seconds, not round to nearest minute'
 status: To Do
 assignee: []
 created_date: '2026-05-22 15:37'
+updated_date: '2026-05-22 18:18'
 labels:
   - bug
 dependencies: []
-ordinal: 31000
+ordinal: 5812.5
 ---
 
 ## Description
