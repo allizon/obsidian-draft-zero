@@ -1,10 +1,10 @@
 ---
 id: TASK-1
 title: Textarea needs to be much larger
-status: To Do
+status: Done
 assignee: []
 created_date: '2026-05-21 22:51'
-updated_date: '2026-05-22 01:27'
+updated_date: '2026-05-22 01:57'
 labels:
   - enhancement
 dependencies: []

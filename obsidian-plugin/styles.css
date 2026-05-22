@@ -9,11 +9,13 @@
   transform: none !important;
   border-radius: 0 !important;
   --dz-tint: transparent;
+  --background-modifier-border-focus: transparent;
   background: color-mix(in srgb, var(--background-primary) 100%, var(--dz-tint)) !important;
   transition: background 2s;
 }
 
-.dz-sprint-modal .modal-content {
+.dz-sprint-modal .modal-content,
+.dz-sprint-modal .modal-content:focus-within {
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -22,6 +24,9 @@
   margin: 0 auto;
   padding: 2rem 1rem;
   background: transparent;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
 }
 
 /* Annoyance levels */
@@ -36,22 +41,32 @@
 }
 
 /* Sprint textarea */
-.dz-textarea {
+.dz-sprint-modal textarea.dz-textarea {
   flex: 1;
   width: 100%;
   resize: none;
-  border: none;
+  border: none !important;
+  box-shadow: none !important;
   background: transparent;
   color: var(--text-normal);
   font-size: 1rem;
-  font-family: var(--font-text);
+  font-family: var(--font-text) !important;
   line-height: 1.6;
-  outline: none;
+  outline: none !important;
   padding: 0;
+}
+body .dz-sprint-modal textarea.dz-textarea:focus,
+body .dz-sprint-modal textarea.dz-textarea:focus-visible {
+  outline: none !important;
+  outline-width: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
 }
 
 /* Invisible ink */
-.dz-textarea.dz-invisible-ink {
+.dz-sprint-modal textarea.dz-textarea.dz-invisible-ink {
   color: transparent !important;
   caret-color: var(--text-normal);
   text-shadow: none !important;

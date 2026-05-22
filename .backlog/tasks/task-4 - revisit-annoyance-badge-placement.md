@@ -4,12 +4,11 @@ title: Revisit annoyance badge placement
 status: To Do
 assignee: []
 created_date: '2026-05-21 22:51'
-updated_date: '2026-05-21 22:51'
+updated_date: '2026-05-22 01:57'
 labels:
   - enhancement
   - ux
-dependencies:
-  - TASK-1
+dependencies: []
 ordinal: 8000
 ---
 

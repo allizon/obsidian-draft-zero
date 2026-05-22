@@ -1,7 +1,7 @@
 ---
 id: TASK-7
 title: Remove textarea border entirely
-status: To Do
+status: Done
 assignee: []
 created_date: '2026-05-21'
 updated_date: '2026-05-21'
