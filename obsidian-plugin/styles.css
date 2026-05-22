@@ -88,9 +88,17 @@ body .dz-sprint-modal textarea.dz-textarea:focus-visible {
   opacity: 1;
 }
 
+.theme-dark .dz-bottom-row {
+  opacity: 0.45;
+}
+
 .dz-bottom-status {
   font-size: 0.85em;
   color: var(--text-faint);
+}
+
+.theme-dark .dz-bottom-status {
+  color: var(--text-muted);
 }
 
 .dz-status-detail {
