@@ -9,11 +9,11 @@ export class SprintModal extends Modal {
   private setupResult: SetupResult;
   private textarea: HTMLTextAreaElement | null = null;
   private annoyanceEl: HTMLElement | null = null;
-  private statusEl: HTMLElement | null = null;
+  private bottomRowEl: HTMLElement | null = null;
   private statusKeyEl: HTMLElement | null = null;
   private statusDetailEl: HTMLElement | null = null;
-  private controlsEl: HTMLElement | null = null;
   private pauseBtn: HTMLButtonElement | null = null;
+  private exitBtn: HTMLButtonElement | null = null;
   private autoSaveInterval: ReturnType<typeof setInterval> | null = null;
   private annoyanceInterval: ReturnType<typeof setInterval> | null = null;
   onFinish: (text: string, goal: Goal, durationSeconds: number, completed: boolean) => void;
@@ -42,7 +42,7 @@ export class SprintModal extends Modal {
     contentEl.addClass("dz-sprint-content");
     contentEl.empty();
     this.textarea = null;
-    this.statusEl = null;
+    this.bottomRowEl = null;
     this.statusKeyEl = null;
     this.statusDetailEl = null;
     this.annoyanceEl = null;
@@ -99,13 +99,15 @@ export class SprintModal extends Modal {
           e.preventDefault();
       });
 
-      this.statusEl = contentEl.createDiv({ cls: "dz-status" });
-      this.statusKeyEl = this.statusEl.createSpan({ cls: "dz-status-key" });
-      this.statusDetailEl = this.statusEl.createSpan({ cls: "dz-status-detail" });
+      this.bottomRowEl = contentEl.createDiv({ cls: "dz-bottom-row" });
 
-      this.controlsEl = contentEl.createDiv({ cls: "dz-controls" });
+      const statusSpan = this.bottomRowEl.createSpan({ cls: "dz-bottom-status" });
+      this.statusKeyEl = statusSpan.createSpan({ cls: "dz-status-key" });
+      this.statusDetailEl = statusSpan.createSpan({ cls: "dz-status-detail" });
 
-      this.pauseBtn = this.controlsEl.createEl("button", { text: "Pause", cls: "dz-controls-btn" });
+      const actionsSpan = this.bottomRowEl.createSpan({ cls: "dz-bottom-actions" });
+
+      this.pauseBtn = actionsSpan.createEl("button", { text: "Pause", cls: "dz-controls-btn" });
       this.pauseBtn.addEventListener("click", () => {
         const { status } = this.machine.state;
         if (status === "running") {
@@ -116,8 +118,8 @@ export class SprintModal extends Modal {
         }
       });
 
-      const exitBtn = this.controlsEl.createEl("button", { text: "Exit", cls: "dz-controls-btn dz-controls-exit" });
-      exitBtn.addEventListener("click", () => {
+      this.exitBtn = actionsSpan.createEl("button", { text: "Exit", cls: "dz-controls-btn dz-controls-exit" });
+      this.exitBtn.addEventListener("click", () => {
         if (window.confirm("End your sprint early? Your progress will be saved.")) {
           this.finish();
         }
@@ -131,8 +133,8 @@ export class SprintModal extends Modal {
       setTimeout(() => this.textarea?.focus(), 50);
     }
 
-    // Update status bar
-    this.updateStatusBar(status, goal, elapsedSeconds, wordCount);
+    // Update bottom row (status + controls)
+    this.updateBottomRow(status, goal, elapsedSeconds, wordCount);
 
     // Show completion UI if completed or freewriting
     const existingCompletion = contentEl.querySelector(".dz-completion");
@@ -147,18 +149,16 @@ export class SprintModal extends Modal {
 
     // Update annoyance level CSS class
     this.updateAnnoyance();
-
-    // Update controls visibility
-    this.updateControls();
   }
 
-  private updateStatusBar(
+  private updateBottomRow(
     status: string,
     goal: Goal | null,
     elapsedSeconds: number,
     wordCount: number
   ): void {
-    if (!this.statusKeyEl || !this.statusDetailEl || !goal) return;
+    if (!this.statusKeyEl || !this.statusDetailEl || !this.pauseBtn || !this.exitBtn || !goal) return;
+
     const m = Math.floor(elapsedSeconds / 60);
     const s = elapsedSeconds % 60;
     const timeStr = `${m}:${String(s).padStart(2, "0")}`;
@@ -183,10 +183,25 @@ export class SprintModal extends Modal {
     } else if (status === "freewriting") {
       key = "Freewriting";
       detail = ` · ${timeStr} · ${wordCount} words`;
+    } else if (status === "completed") {
+      detail = ` · ${timeStr} · ${wordCount} words`;
     }
 
     this.statusKeyEl.setText(key);
     this.statusDetailEl.setText(detail);
+
+    // Buttons: hidden in completed state, pause hidden in freewriting
+    const showButtons = status !== "completed";
+    this.exitBtn.style.display = showButtons ? "" : "none";
+    if (status === "paused") {
+      this.pauseBtn.setText("Resume");
+      this.pauseBtn.style.display = "";
+    } else if (status === "running") {
+      this.pauseBtn.setText("Pause");
+      this.pauseBtn.style.display = "";
+    } else {
+      this.pauseBtn.style.display = "none";
+    }
   }
 
   private renderCompletionUI(): void {
@@ -222,22 +237,6 @@ export class SprintModal extends Modal {
     finishBtn.addEventListener("click", () => {
       this.finish();
     });
-  }
-
-  private updateControls(): void {
-    const { status } = this.machine.state;
-    if (!this.controlsEl || !this.pauseBtn) return;
-    const active = status === "running" || status === "paused" || status === "freewriting";
-    this.controlsEl.style.display = active ? "" : "none";
-    if (status === "paused") {
-      this.pauseBtn.setText("Resume");
-      this.pauseBtn.style.display = "";
-    } else if (status === "running") {
-      this.pauseBtn.setText("Pause");
-      this.pauseBtn.style.display = "";
-    } else {
-      this.pauseBtn.style.display = "none";
-    }
   }
 
   private updateInvisibleInk(): void {

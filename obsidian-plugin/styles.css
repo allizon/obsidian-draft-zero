@@ -73,17 +73,24 @@ body .dz-sprint-modal textarea.dz-textarea:focus-visible {
 }
 
 /* Status bar — bottom, minimal by default */
-.dz-status {
-  font-size: 0.85em;
-  color: var(--text-faint);
+/* Combined status + controls row */
+.dz-bottom-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-top: 0.5rem;
+  opacity: 0.2;
+  transition: opacity 0.2s;
   user-select: none;
-  text-align: center;
-  transition: color 0.15s;
 }
 
-.dz-status:hover {
-  color: var(--text-muted);
+.dz-bottom-row:hover {
+  opacity: 1;
+}
+
+.dz-bottom-status {
+  font-size: 0.85em;
+  color: var(--text-faint);
 }
 
 .dz-status-detail {
@@ -91,22 +98,13 @@ body .dz-sprint-modal textarea.dz-textarea:focus-visible {
   transition: opacity 0.2s;
 }
 
-.dz-status:hover .dz-status-detail {
+.dz-bottom-row:hover .dz-status-detail {
   opacity: 1;
 }
 
-/* Sprint controls — subtle pause/exit row */
-.dz-controls {
+.dz-bottom-actions {
   display: flex;
-  gap: 1.25rem;
-  justify-content: center;
-  margin-top: 0.25rem;
-  opacity: 0.2;
-  transition: opacity 0.2s;
-}
-
-.dz-controls:hover {
-  opacity: 1;
+  gap: 0.75rem;
 }
 
 .dz-controls-btn {
