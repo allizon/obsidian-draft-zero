@@ -75,6 +75,33 @@ describe("SessionStateMachine", () => {
     expect(machine.state.elapsedSeconds).toBe(0);
   });
 
+  it("EXTEND uses original goal duration for time goal", () => {
+    machine.dispatch({ type: "START", goal: { type: "time", value: 300 }, text: "", config: defaultConfig });
+    machine.dispatch({ type: "COMPLETE" });
+    machine.dispatch({ type: "EXTEND" });
+    expect(machine.state.goal).toEqual({ type: "time", value: 300 });
+    expect(machine.state.elapsedSeconds).toBe(0);
+  });
+
+  it("EXTEND uses original goal word count for word goal", () => {
+    machine.dispatch({ type: "START", goal: { type: "words", value: 100 }, text: "", config: defaultConfig });
+    machine.dispatch({ type: "TYPE", text: "hello world foo bar baz qux quux corge grault garply waldo fred plugh thud".repeat(8) });
+    machine.dispatch({ type: "COMPLETE" });
+    const wordCountAtCompletion = machine.state.wordCount;
+    machine.dispatch({ type: "EXTEND" });
+    expect(machine.state.goal).toEqual({ type: "words", value: wordCountAtCompletion + 100 });
+  });
+
+  it("EXTEND preserves originalGoal across multiple extensions", () => {
+    machine.dispatch({ type: "START", goal: { type: "time", value: 300 }, text: "", config: defaultConfig });
+    machine.dispatch({ type: "COMPLETE" });
+    machine.dispatch({ type: "EXTEND" });
+    machine.dispatch({ type: "COMPLETE" });
+    machine.dispatch({ type: "EXTEND" });
+    expect(machine.state.goal).toEqual({ type: "time", value: 300 });
+    expect(machine.state.originalGoal).toEqual({ type: "time", value: 300 });
+  });
+
   it("FREEWRITE from completed enters freewriting status", () => {
     machine.dispatch({ type: "START", goal: { type: "time", value: 1 }, text: "", config: defaultConfig });
     machine.dispatch({ type: "TICK" });

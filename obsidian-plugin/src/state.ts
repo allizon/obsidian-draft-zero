@@ -10,6 +10,7 @@ export type SessionStatus = "idle" | "running" | "paused" | "completed" | "freew
 export interface SessionState {
   status: SessionStatus;
   goal: Goal | null;
+  originalGoal: Goal | null;
   text: string;
   challengeConfig: ChallengeConfig;
   elapsedSeconds: number;
@@ -42,6 +43,7 @@ function isGoalMet(state: SessionState): boolean {
 const idleState: SessionState = {
   status: "idle",
   goal: null,
+  originalGoal: null,
   text: "",
   challengeConfig: { noDelete: false, invisibleInk: false },
   elapsedSeconds: 0,
@@ -76,6 +78,7 @@ export class SessionStateMachine {
         next = {
           status: "running",
           goal: action.goal,
+          originalGoal: action.goal,
           text: action.text,
           challengeConfig: action.config,
           elapsedSeconds: 0,
@@ -105,12 +108,14 @@ export class SessionStateMachine {
         break;
 
       case "EXTEND":
-        if (prev.status === "completed") {
+        if (prev.status === "completed" && prev.goal && prev.originalGoal) {
+          const extension = prev.originalGoal.value;
           next.status = "running";
           next.elapsedSeconds = 0;
-          next.goal = prev.goal
-            ? { type: prev.goal.type, value: prev.goal.value + (prev.goal.type === "time" ? 300 : 100) }
-            : prev.goal;
+          next.goal =
+            prev.goal.type === "time"
+              ? { type: "time", value: extension }
+              : { type: "words", value: prev.wordCount + extension };
         }
         break;
 
