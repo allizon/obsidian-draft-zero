@@ -71,7 +71,7 @@ export class SessionStateMachine {
 
   dispatch(action: SessionAction): void {
     const prev = this.state;
-    let next = { ...prev };
+    let next: SessionState = prev;
 
     switch (action.type) {
       case "START":
@@ -89,46 +89,46 @@ export class SessionStateMachine {
 
       case "TICK":
         if (prev.status !== "running" && prev.status !== "freewriting") break;
-        next.elapsedSeconds = prev.elapsedSeconds + 1;
-        if (prev.status === "running" && isGoalMet(next)) next.status = "completed";
+        next = { ...prev, elapsedSeconds: prev.elapsedSeconds + 1 };
+        if (prev.status === "running" && isGoalMet(next)) next = { ...next, status: "completed" };
         break;
 
       case "TYPE":
         if (prev.status !== "running" && prev.status !== "freewriting") break;
-        next.text = action.text;
-        next.wordCount = countWords(action.text);
-        next.lastTypedAt = Date.now();
-        if (prev.status === "running" && isGoalMet(next)) next.status = "completed";
+        next = { ...prev, text: action.text, wordCount: countWords(action.text), lastTypedAt: Date.now() };
+        if (prev.status === "running" && isGoalMet(next)) next = { ...next, status: "completed" };
         break;
 
       case "COMPLETE":
         if (prev.status === "running" || prev.status === "freewriting") {
-          next.status = "completed";
+          next = { ...prev, status: "completed" };
         }
         break;
 
       case "EXTEND":
         if (prev.status === "completed" && prev.goal && prev.originalGoal) {
           const extension = prev.originalGoal.value;
-          next.status = "running";
-          next.elapsedSeconds = 0;
-          next.goal =
-            prev.goal.type === "time"
+          next = {
+            ...prev,
+            status: "running",
+            elapsedSeconds: 0,
+            goal: prev.goal.type === "time"
               ? { type: "time", value: extension }
-              : { type: "words", value: prev.wordCount + extension };
+              : { type: "words", value: prev.wordCount + extension },
+          };
         }
         break;
 
       case "FREEWRITE":
-        if (prev.status === "completed") next.status = "freewriting";
+        if (prev.status === "completed") next = { ...prev, status: "freewriting" };
         break;
 
       case "PAUSE":
-        if (prev.status === "running") next.status = "paused";
+        if (prev.status === "running") next = { ...prev, status: "paused" };
         break;
 
       case "RESUME":
-        if (prev.status === "paused") next.status = "running";
+        if (prev.status === "paused") next = { ...prev, status: "running" };
         break;
 
       case "END":
