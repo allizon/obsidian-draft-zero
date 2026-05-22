@@ -10,6 +10,8 @@ export class SprintModal extends Modal {
   private textarea: HTMLTextAreaElement | null = null;
   private annoyanceEl: HTMLElement | null = null;
   private statusEl: HTMLElement | null = null;
+  private statusKeyEl: HTMLElement | null = null;
+  private statusDetailEl: HTMLElement | null = null;
   private autoSaveInterval: ReturnType<typeof setInterval> | null = null;
   private annoyanceInterval: ReturnType<typeof setInterval> | null = null;
   onFinish: (text: string, goal: Goal, durationSeconds: number, completed: boolean) => void;
@@ -39,6 +41,8 @@ export class SprintModal extends Modal {
     contentEl.empty();
     this.textarea = null;
     this.statusEl = null;
+    this.statusKeyEl = null;
+    this.statusDetailEl = null;
     this.annoyanceEl = null;
 
     this.render();
@@ -68,8 +72,6 @@ export class SprintModal extends Modal {
     if (!this.textarea) {
       contentEl.empty();
 
-      this.statusEl = contentEl.createDiv({ cls: "dz-status" });
-
       this.textarea = contentEl.createEl("textarea", { cls: "dz-textarea" });
       this.textarea.value = text;
       this.textarea.addEventListener("input", () => {
@@ -86,6 +88,10 @@ export class SprintModal extends Modal {
         if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "x")
           e.preventDefault();
       });
+
+      this.statusEl = contentEl.createDiv({ cls: "dz-status" });
+      this.statusKeyEl = this.statusEl.createSpan({ cls: "dz-status-key" });
+      this.statusDetailEl = this.statusEl.createSpan({ cls: "dz-status-detail" });
 
       this.annoyanceEl = contentEl.createDiv({ cls: "dz-annoyance-badge" });
 
@@ -119,26 +125,35 @@ export class SprintModal extends Modal {
     elapsedSeconds: number,
     wordCount: number
   ): void {
-    if (!this.statusEl || !goal) return;
+    if (!this.statusKeyEl || !this.statusDetailEl || !goal) return;
     const m = Math.floor(elapsedSeconds / 60);
     const s = elapsedSeconds % 60;
     const timeStr = `${m}:${String(s).padStart(2, "0")}`;
+
+    let key: string;
+    let detail: string;
 
     if (goal.type === "time") {
       const remaining = Math.max(0, goal.value - elapsedSeconds);
       const rm = Math.floor(remaining / 60);
       const rs = remaining % 60;
-      this.statusEl.setText(`${timeStr} — ${rm}:${String(rs).padStart(2, "0")} left · ${wordCount} words`);
+      key = `${rm}:${String(rs).padStart(2, "0")}`;
+      detail = ` · ${timeStr} elapsed · ${wordCount} words`;
     } else {
-      this.statusEl.setText(`${wordCount} / ${goal.value} words · ${timeStr}`);
+      key = `${wordCount} / ${goal.value}`;
+      detail = ` · ${timeStr}`;
     }
 
     if (status === "paused") {
-      this.statusEl.setText("Paused — " + this.statusEl.getText());
+      key = "Paused";
+      detail = ` · ${timeStr} · ${wordCount} words`;
+    } else if (status === "freewriting") {
+      key = "Freewriting";
+      detail = ` · ${timeStr} · ${wordCount} words`;
     }
-    if (status === "freewriting") {
-      this.statusEl.setText("Freewriting · " + this.statusEl.getText());
-    }
+
+    this.statusKeyEl.setText(key);
+    this.statusDetailEl.setText(detail);
   }
 
   private renderCompletionUI(): void {
