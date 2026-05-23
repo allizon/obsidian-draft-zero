@@ -259,3 +259,10 @@ body .dz-sprint-modal textarea.dz-textarea:focus-visible {
 .dz-heatmap-cell[data-level="2"] { background: var(--color-green); opacity: 0.60; }
 .dz-heatmap-cell[data-level="3"] { background: var(--color-green); opacity: 0.80; }
 .dz-heatmap-cell[data-level="4"] { background: var(--color-green); opacity: 1.0; }
+
+/* Quick Sprint notice */
+.dz-notice-dim {
+  opacity: 0.65;
+  font-size: 0.875em;
+  margin-top: 2px;
+}

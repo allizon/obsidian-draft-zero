@@ -5,6 +5,7 @@ import { SetupModal } from "./setup-modal";
 import { SprintModal } from "./sprint-modal";
 import { StatsView, STATS_VIEW_TYPE } from "./stats-view";
 import { saveSprintToNewFile, appendSprintToDailyNote } from "./vault";
+import { buildQuickSprintResult, formatQuickSprintNoticeLines } from "./quick-sprint";
 import type { Goal } from "./state";
 import type { SprintSession } from "./stats";
 import type { ChallengeConfig } from "./challenges";
@@ -23,9 +24,17 @@ export default class DraftZeroPlugin extends Plugin {
         new StatsView(leaf, () => this.storage.settings.sessions)
     );
 
-    // Ribbon icon → open stats
+    // Ribbon icons
     this.addRibbonIcon("feather", "Draft Zero Stats", () => {
       this.openStatsView();
+    });
+    this.addRibbonIcon("zap", "Quick Sprint at cursor", () => {
+      const editor = this.app.workspace.activeEditor?.editor;
+      if (editor) {
+        this.quickStartAtCursor(editor);
+      } else {
+        this.quickStart();
+      }
     });
 
     // Commands
@@ -39,6 +48,18 @@ export default class DraftZeroPlugin extends Plugin {
       id: "sprint-at-cursor",
       name: "Sprint at cursor",
       editorCallback: (editor: Editor) => this.startSprintAtCursor(editor),
+    });
+
+    this.addCommand({
+      id: "quick-sprint",
+      name: "Quick Sprint",
+      callback: () => this.quickStart(),
+    });
+
+    this.addCommand({
+      id: "quick-sprint-at-cursor",
+      name: "Quick Sprint at cursor",
+      editorCallback: (editor: Editor) => this.quickStartAtCursor(editor),
     });
 
     this.addCommand({
@@ -191,6 +212,65 @@ export default class DraftZeroPlugin extends Plugin {
         seedText
       ).open();
     }).open();
+  }
+
+  private quickStart(): void {
+    const { wasAsk, ...result } = buildQuickSprintResult(this.storage.settings);
+    this.showQuickSprintNotice(result.goal, result.challengeConfig, result.saveDestination, wasAsk);
+    new SprintModal(
+      this.app,
+      result,
+      "",
+      async (text, goal, durationSeconds, completed) => {
+        await this.saveSprint(text, goal, durationSeconds, completed, result.saveDestination, result.challengeConfig);
+      }
+    ).open();
+  }
+
+  private quickStartAtCursor(editor: Editor): void {
+    const cursor = editor.getCursor();
+    const beforeCursor = editor.getValue().slice(0, editor.posToOffset(cursor));
+    const seedText = beforeCursor.split("\n").slice(-10).join("\n");
+    const activeFile = this.app.workspace.getActiveFile();
+    const vaultPath = activeFile?.path ?? null;
+
+    const { wasAsk, ...result } = buildQuickSprintResult(this.storage.settings);
+    this.showQuickSprintNotice(result.goal, result.challengeConfig, result.saveDestination, wasAsk);
+    new SprintModal(
+      this.app,
+      result,
+      "",
+      async (text, goal, durationSeconds, completed) => {
+        editor.replaceRange(text, cursor);
+        await this.recordSession(text, goal, durationSeconds, completed, result.challengeConfig, vaultPath);
+        const wordCount = text.trim() === "" ? 0 : text.trim().split(/\s+/).length;
+        if (wordCount === 0) {
+          new Notice("Sprint ended with no text — nothing inserted.");
+        } else {
+          new Notice(`Sprint inserted at cursor (${wordCount} words)`);
+        }
+      },
+      seedText
+    ).open();
+  }
+
+  private showQuickSprintNotice(
+    goal: Goal,
+    challengeConfig: ChallengeConfig,
+    saveDestination: "new-file" | "daily-note",
+    wasAsk: boolean
+  ): void {
+    const lines = formatQuickSprintNoticeLines(goal, challengeConfig, saveDestination, wasAsk);
+    const notice = new Notice("", 8000);
+    const el = (notice as any).noticeEl as HTMLElement;
+    el.empty();
+    el.createEl("strong", { text: lines.goal });
+    if (lines.challenges) {
+      el.createEl("div", { text: lines.challenges, cls: "dz-notice-dim" });
+    }
+    if (lines.saveDest) {
+      el.createEl("div", { text: lines.saveDest, cls: "dz-notice-dim" });
+    }
   }
 
   private async openStatsView(): Promise<void> {
