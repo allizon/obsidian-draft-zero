@@ -99,15 +99,21 @@ export class SetupModal extends Modal {
       btn
         .setButtonText("Start writing")
         .setCta()
-        .onClick(() => {
-          this.onSubmit({
-            goal: { type: this.goalType, value: this.goalValue },
-            challengeConfig: this.challengeConfig,
-            saveDestination: this.saveDestination,
-          });
-          this.close();
-        })
+        .onClick(() => this.submit())
     );
+
+    contentEl.addEventListener("keydown", (e: KeyboardEvent) => {
+      if (e.key === "Enter") this.submit();
+    });
+  }
+
+  private submit(): void {
+    this.onSubmit({
+      goal: { type: this.goalType, value: this.goalValue },
+      challengeConfig: this.challengeConfig,
+      saveDestination: this.saveDestination,
+    });
+    this.close();
   }
 
   onClose(): void {

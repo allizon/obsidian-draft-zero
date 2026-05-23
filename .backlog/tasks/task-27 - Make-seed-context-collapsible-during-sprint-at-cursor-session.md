@@ -4,6 +4,7 @@ title: Make seed context collapsible during sprint-at-cursor session
 status: To Do
 assignee: []
 created_date: '2026-05-22 19:07'
+updated_date: '2026-05-22 20:22'
 labels:
   - feature
   - ux
@@ -11,7 +12,7 @@ dependencies: []
 references:
   - TASK-17
 priority: low
-ordinal: 39000
+ordinal: 5630.859375
 ---
 
 ## Description
